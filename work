@@ -8,13 +8,7 @@ p{
   text-align: center;
   vertical-align: middle;
   line-height: 90px;
-}
-button{
-  background-color: #4CAF50; 
-    border: black;
-    color: white;
-    text-align: center;
-}
+  }
 </style>
 <html>
   <head>
