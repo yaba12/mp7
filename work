@@ -1,13 +1,296 @@
-import praw
-
-reddit = praw.Reddit(client_id='kCrm1Fz7g6alMw',
-                     client_secret='z3l8kIhB9zYAQl7QUobTOkBGCnQ',
-                     user_agent='testscriptplswork',
-                     username='joshdunigan',
-                     password='joshdunigan123')
-subreddit = reddit.subreddit('dankmemes')
-print(subreddit.display_name)
-for submission in subreddit.hot(limit=10):
-    print(submission.title)   
-    print(submission.url)
-
+<style>
+h1{
+  text-align: center;
+  vertical-align: middle;
+  line-height: 90px;
+}
+p{
+  text-align: center;
+  vertical-align: middle;
+  line-height: 90px;
+}
+button{
+  background-color: #4CAF50; 
+    border: black;
+    color: white;
+    text-align: center;
+}
+</style>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>
+      Pong CS125
+    </title>
+    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
+    <style>
+    </style>
+  </head>
+  <body>
+    <h1>Pong</h1>
+    <p>Sehe Tinfang and Bryan Cheng</p>
+    <p> Controls are W,S for first player, and Arrow keys for second player. It is impossible to beat the practice.</p>
+    <button onclick="button2()">2Player</button>
+    <button onclick="buttonAI()">Practice</button>
+    <div id="MyDiv"></div>
+ <canvas id="myCanvas" width="1200" height="600" style="border:1px solid #000000;" left="40%" margin-left = "400px;">
+ </canvas> 
+ <script>
+    var c = document.getElementById("myCanvas");
+    var theCanvas = c.getContext("2d");
+    var xspeed = 4.5;
+    var yspeed= 4.5;
+    var leftBlockX=0;
+    var rightBlockX=1190; 
+    var leftBlockY=0;
+    var rightBlockY=0;
+    var width=10;
+    var height=100;
+    var leftBlock = {xLoc1:leftBlockX,  yLoc1:leftBlockY, width1:width, height1:height};
+    var rightBlock= {xLoc2:rightBlockX, yLoc2:rightBlockY, width2:width, height2:height}; 
+    var ballX = 600;
+    var ballY =300;
+    theCanvas.fillStyle="green";
+    var upKeyDown = false;
+    var downKeyDown=false;
+    var wKeyDown=false;
+    var sKeyDown= false;
+    var counter =0;
+    var number;
+    var random;
+    var random2;
+    var random3;
+    var interval1;
+    var interval2;
+    var score1 =0;
+    var score2 =0;
+      function ball() 
+      {
+        theCanvas.beginPath();
+        theCanvas.lineWidth = 5;
+        theCanvas.strokeStyle = "red";
+        theCanvas.arc(600, 300, 10, 0, 2*Math.PI);
+        theCanvas.stroke();
+      }
+      function button2    ()
+      {
+      score1=0;
+      score2=0;
+      clearInterval(interval1);
+      clearInterval(interval2);
+      interval1= setInterval(ballMoverPlayer,5);
+      interval2= setInterval(playerMover,5);
+      }
+      function buttonAI()
+      {
+      score1=0;
+      score2=0;
+      clearInterval(interval1);
+      clearInterval(interval2);
+      interval1= setInterval(ballMoverAI,5);
+      interval2= setInterval(blockMover,5);
+      }
+      function drawScore() 
+      {
+        document.getElementById("MyDiv").innerHTML="Score is " + score1 + " : " + score2;
+      }
+      function blockMover()
+      {
+        theCanvas.clearRect(0,0,1200,600);
+         if(wKeyDown && rightBlockY>=0)
+        {
+          rightBlockY= rightBlockY -3;
+        }
+        if(sKeyDown && rightBlockY<=500)
+        {
+          rightBlockY=rightBlockY+3;
+        }
+        theCanvas.fillStyle="green";
+        theCanvas.fillRect(0, rightBlockY, 10, 100);
+        theCanvas.fillRect(1190, ballY-50, 10, 100);
+        theCanvas.stroke();
+        counter++;
+      }
+      function startGame()
+      {
+        ballY=300;
+        ballX=600;
+        theCanvas.clearRect(0,0,theCanvas.width,theCanvas.height);
+        ball();
+        drawScore();
+        counter=0;
+      } 
+        
+      function playerMover()
+      {
+        theCanvas.clearRect(0,0,1200,600);
+        if(upKeyDown && leftBlockY>=0)
+        {
+          leftBlockY= leftBlockY - 3;
+        }
+        if(downKeyDown && leftBlockY<=500)
+        {
+          leftBlockY=leftBlockY +3;
+        }
+        if(wKeyDown && rightBlockY>=0)
+        {
+          rightBlockY= rightBlockY -3;
+        }
+        if(sKeyDown && rightBlockY<=500)
+        {
+          rightBlockY=rightBlockY+3;
+        }
+        theCanvas.fillStyle="green";
+        theCanvas.fillRect(0, rightBlockY, 10, 100);
+        theCanvas.fillRect(1190, leftBlockY, 10, 100);
+        theCanvas.stroke();
+        counter++;
+      }
+      function ballMoverPlayer()
+      {
+        if(counter==0)
+        {
+          random = Math.random()*140+40;
+          random2 = Math.random()*140+200;
+          random3= Math.random()*2;
+          if(random3<=1)
+          {
+            number=random;
+          }else{
+            number=random2;
+          }
+        }
+        if(ballY>=600 || ballY<=0)
+        {
+          yspeed=-yspeed;
+          ballX=ballX+xspeed;
+          ballY=ballY+yspeed*Math.cos(number);
+        }else{
+          ballX=ballX+xspeed;
+          ballY=ballY+yspeed*Math.cos(number);
+       }
+       if( ballX>=1190 && (ballY>= leftBlockY && ballY<=(leftBlockY+100)))
+       {
+         xspeed=-xspeed;
+          ballX=ballX+xspeed;  
+       }
+       if(ballX<=10 && (ballY>rightBlockY && ballY<=(rightBlockY+100)))
+       {
+          xspeed=-xspeed;
+          ballX=ballX+xspeed;  
+       }
+       if(ballX>=1200)
+       {    
+         score1++;
+         counter=0;
+         startGame();
+        }
+        if(ballX<=0)
+       {
+         score2++;
+         counter=0;
+         startGame();
+       }
+        theCanvas.beginPath();
+        theCanvas.lineWidth = 5;
+        theCanvas.strokeStyle = "red";
+        theCanvas.arc(ballX, ballY, 10, 0, 2*Math.PI);
+        theCanvas.stroke();
+      }
+       function ballMoverAI()
+      {
+        if(counter==0)
+        {
+          random = Math.random()*140+40;
+          random2 = Math.random()*140+200;
+          random3= Math.random()*2;
+          if(random3<=1)
+          {
+            number=random;
+          }else{
+            number=random2;
+          }
+        }
+        if(ballY>=600 || ballY<=0)
+        {
+          yspeed=-yspeed;
+          ballX=ballX+xspeed;
+          ballY=ballY+yspeed*Math.cos(number);
+        }else{
+          ballX=ballX+xspeed;
+          ballY=ballY+yspeed*Math.cos(number);
+       }
+       if( ballX>=1190)
+       {
+         xspeed=-xspeed;
+          ballX=ballX+xspeed;  
+       }
+       if(ballX<=10 && (ballY>rightBlockY && ballY<=(rightBlockY+100)))
+       {
+         xspeed=-xspeed;
+          ballX=ballX+xspeed;  
+       }
+       if(ballX>=1200)
+       {
+         score1++;
+         counter=0;
+         startGame();
+       }
+       if(ballX<=0)
+       {
+        score2++;
+        counter=0;
+        startGame();
+       }
+        theCanvas.beginPath();
+        theCanvas.lineWidth = 5;
+        theCanvas.strokeStyle = "red";
+        theCanvas.arc(ballX, ballY, 10, 0, 2*Math.PI);
+        theCanvas.stroke();
+      }
+      function myKeyDownHandler(theEvent)
+      {
+        if(theEvent.keyCode==38)
+        {
+          upKeyDown = true;
+        }
+        if(theEvent.keyCode==40)
+        {
+          downKeyDown = true;
+        }
+        if(theEvent.keyCode==87)
+        {
+          wKeyDown = true;
+        }
+        if(theEvent.keyCode==83)
+        {
+          sKeyDown = true;
+        }
+        theEvent.preventDefault();
+      }
+      
+      function myKeyUpHandler(theEvent)
+      {
+        if(theEvent.keyCode==38)
+        {
+          upKeyDown = false;
+        }
+        if(theEvent.keyCode==40)
+        {
+          downKeyDown = false;
+        }
+        if(theEvent.keyCode==87)
+        {
+          wKeyDown = false;
+        }
+        if(theEvent.keyCode==83)
+        {
+          sKeyDown = false;
+        }
+      }
+      
+      addEventListener("keydown", myKeyDownHandler); 
+      addEventListener("keyup", myKeyUpHandler);
+ </script>
+  </body>
+</html>
